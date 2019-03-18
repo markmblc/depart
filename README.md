@@ -6,7 +6,14 @@ Depart is in a pre-release state and is subject to frequent breaking changes. Me
 
 ## Synopsis
 
-Depart is express middleware for handling `multipart/form-data`. It is also usable as a standalone request processor. Unlike similar packages, Depart supports streaming each file to multiple storage methods simultaneously, without the need to store on disk first. It is strongly typed via TypeScript and is async/await friendly.
+Depart is express middleware for handling `multipart/form-data`. It is also usable as a standalone request processor. 
+
+## Features
+
+- Strongly typed via TypeScript
+- Promises & async/await friendly.
+- Supports streaming each file to multiple storage methods simultaneously, without the need to store on disk first. 
+
 
 ## Installation
 

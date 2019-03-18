@@ -3,41 +3,28 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { randomBytes } from 'crypto';
 import { sync } from 'mkdirp';
-import { IStorageModule } from './IStorageModule';
 import { DepartFile, DepartError } from '../lib/models';
+import { BaseStorageModule } from './BaseStorageModule';
 
-export interface DiskStorageConfig {
-  fileName?: (file: DepartFile) => string | string;
-  destination?: string;
+export interface DiskStorageSetup {
+  fileName?: string | ((file: DepartFile, storageSetup: DiskStorageSetup) => Promise<string>);
+  destination?: string | ((file: DepartFile, storageSetup: DiskStorageSetup) => Promise<string>);
 }
 
-interface DiskStorageInfo {
-  destination: string;
-  fileName: string;
+export interface DiskStorageResult extends DiskStorageSetup {
   path: string;
   size: number;
 }
 
-export class DiskStorage implements IStorageModule<DiskStorageInfo> {
-  constructor(private opts: DiskStorageConfig) {
-    if (typeof opts.destination === 'string') sync(opts.destination);
-    else opts.destination = tmpdir();
-  }
+export class DiskStorage extends BaseStorageModule<DiskStorageSetup, DiskStorageResult> {
+  async handleFile(stream: NodeJS.ReadableStream, departFile: DepartFile, storageSetup?: DiskStorageSetup): Promise<DiskStorageResult> {
+    if (!storageSetup) storageSetup = {};
 
-  async handleFile(stream: NodeJS.ReadableStream, file: DepartFile): Promise<DiskStorageInfo> {
-    if (!this.opts.destination) throw 'Invalid destination';
+    const destination = await this.coalesce([storageSetup.destination, this.storageCfg.destination, tmpdir], [departFile, storageSetup]);
+    sync(destination);
+    const fileName = await this.coalesce([storageSetup.fileName, this.storageCfg.fileName, this._generateFilename], [departFile, storageSetup]);
 
-    let fileName: string;
-    try {
-      if (this.opts.fileName) {
-        if (typeof this.opts.fileName === 'function') fileName = this.opts.fileName(file);
-        else fileName = this.opts.fileName;
-      } else fileName = await this._generateFilename();
-    } catch (err) {
-      throw `Generate fileName: ${err}`;
-    }
-
-    var finalPath = join(this.opts.destination, fileName);
+    var finalPath = join(destination, fileName);
     var outStream = createWriteStream(finalPath);
 
     stream.pipe(outStream);
@@ -46,9 +33,9 @@ export class DiskStorage implements IStorageModule<DiskStorageInfo> {
       let error: DepartError;
       outStream.on('error', (err) => error = new DepartError(err.message));
       outStream.on('finish', () => {
-        const expandedFile: DiskStorageInfo = {
-          destination: this.opts.destination,
+        const expandedFile: DiskStorageResult = {
           fileName: fileName,
+          destination: destination,
           path: finalPath,
           size: outStream.bytesWritten
         };
@@ -58,12 +45,8 @@ export class DiskStorage implements IStorageModule<DiskStorageInfo> {
     });
   }
 
-  removeFile(file: any) {
+  removeFile(file: DiskStorageResult) {
     var path = file.path;
-
-    delete file.destination;
-    delete file.fileName;
-    delete file.path;
 
     fs.unlink(path);
     return Promise.resolve();

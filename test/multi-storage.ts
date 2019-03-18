@@ -38,10 +38,10 @@ describe('Multi Storage', function () {
 
     const result = await form.submit();
     assert.equal(result.fields.name, 'Depart');
-    assert.equal(result.fields.small0[0].originalName, 'small0.dat')
-    assert.equal(result.fields.small0[0].storage[0].size, 1778);
-    assert.equal(result.fields.small0[0].storage[1].buffer.length, 1778);
-    assert.equal(form.fileSize(result.fields.small0[0].storage[0].path), 1778);
+    assert.equal(result.files.small0[0].originalName, 'small0.dat')
+    assert.equal(result.files.small0[0].storage.result[0].size, 1778);
+    assert.equal(result.files.small0[0].storage.result[1].buffer.length, 1778);
+    assert.equal(form.fileSize(result.files.small0[0].storage.result[0].path), 1778);
   })
 
   it('should store on disk in two places', async () => {
@@ -52,10 +52,10 @@ describe('Multi Storage', function () {
 
     const result = await form.submit();
     assert.equal(result.fields.name, 'Depart');
-    assert.equal(result.fields.small0[0].originalName, 'small0.dat')
-    assert.equal(result.fields.small0[0].storage[0].size, 1778);
-    assert.equal(result.fields.small0[0].storage[1].buffer.length, 1778);
-    assert.equal(form.fileSize(result.fields.small0[0].storage[0].path), 1778);
+    assert.equal(result.files.small0[0].originalName, 'small0.dat')
+    assert.equal(result.files.small0[0].storage.result[0].size, 1778);
+    assert.equal(result.files.small0[0].storage.result[1].buffer.length, 1778);
+    assert.equal(form.fileSize(result.files.small0[0].storage.result[0].path), 1778);
   })
 
   it('should process empty fields and store an empty file in disk and memory', async () => {
@@ -83,11 +83,11 @@ describe('Multi Storage', function () {
     assert.deepEqual(result.fields.checkboxhalfempty, ['cb1', ''])
     assert.deepEqual(result.fields.checkboxempty, ['', ''])
 
-    assert.equal(result.fields.empty[0].originalName, 'empty.dat')
-    assert.equal(result.fields.empty[0].storage[0].size, 0)
-    assert.equal(form.fileSize(result.fields.empty[0].storage[0].path), 0)
-    assert.equal(result.fields.empty[0].storage[1].buffer.length, 0)
-    assert.equal(Buffer.isBuffer(result.fields.empty[0].storage[1].buffer), true)
+    assert.equal(result.files.empty[0].originalName, 'empty.dat')
+    assert.equal(result.files.empty[0].storage.result[0].size, 0)
+    assert.equal(form.fileSize(result.files.empty[0].storage.result[0].path), 0)
+    assert.equal(result.files.empty[0].storage.result[1].buffer.length, 0)
+    assert.equal(Buffer.isBuffer(result.files.empty[0].storage.result[1].buffer), true)
   })
 
   it('should store multiple files on disk and memory', async () => {
@@ -103,40 +103,40 @@ describe('Multi Storage', function () {
 
     const result = await form.submit();
 
-    assert.equal(result.fields.empty[0].originalName, 'empty.dat')
-    assert.equal(result.fields.empty[0].storage[0].size, 0)
-    assert.equal(form.fileSize(result.fields.empty[0].storage[0].path), 0)
-    assert.equal(result.fields.empty[0].storage[1].buffer.length, 0)
+    assert.equal(result.files.empty[0].originalName, 'empty.dat')
+    assert.equal(result.files.empty[0].storage.result[0].size, 0)
+    assert.equal(form.fileSize(result.files.empty[0].storage.result[0].path), 0)
+    assert.equal(result.files.empty[0].storage.result[1].buffer.length, 0)
 
-    assert.equal(result.fields.tiny0[0].originalName, 'tiny0.dat')
-    assert.equal(result.fields.tiny0[0].storage[0].size, 122)
-    assert.equal(form.fileSize(result.fields.tiny0[0].storage[0].path), 122)
-    assert.equal(result.fields.tiny0[0].storage[1].buffer.length, 122)
+    assert.equal(result.files.tiny0[0].originalName, 'tiny0.dat')
+    assert.equal(result.files.tiny0[0].storage.result[0].size, 122)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[0].path), 122)
+    assert.equal(result.files.tiny0[0].storage.result[1].buffer.length, 122)
 
-    assert.equal(result.fields.tiny1[0].originalName, 'tiny1.dat')
-    assert.equal(result.fields.tiny1[0].storage[0].size, 7)
-    assert.equal(form.fileSize(result.fields.tiny1[0].storage[0].path), 7)
-    assert.equal(result.fields.tiny1[0].storage[1].buffer.length, 7)
+    assert.equal(result.files.tiny1[0].originalName, 'tiny1.dat')
+    assert.equal(result.files.tiny1[0].storage.result[0].size, 7)
+    assert.equal(form.fileSize(result.files.tiny1[0].storage.result[0].path), 7)
+    assert.equal(result.files.tiny1[0].storage.result[1].buffer.length, 7)
 
-    assert.equal(result.fields.small0[0].originalName, 'small0.dat')
-    assert.equal(result.fields.small0[0].storage[0].size, 1778)
-    assert.equal(form.fileSize(result.fields.small0[0].storage[0].path), 1778)
-    assert.equal(result.fields.small0[0].storage[1].buffer.length, 1778)
+    assert.equal(result.files.small0[0].originalName, 'small0.dat')
+    assert.equal(result.files.small0[0].storage.result[0].size, 1778)
+    assert.equal(form.fileSize(result.files.small0[0].storage.result[0].path), 1778)
+    assert.equal(result.files.small0[0].storage.result[1].buffer.length, 1778)
 
-    assert.equal(result.fields.small1[0].originalName, 'small1.dat')
-    assert.equal(result.fields.small1[0].storage[0].size, 315)
-    assert.equal(form.fileSize(result.fields.small1[0].storage[0].path), 315)
-    assert.equal(result.fields.small1[0].storage[1].buffer.length, 315)
+    assert.equal(result.files.small1[0].originalName, 'small1.dat')
+    assert.equal(result.files.small1[0].storage.result[0].size, 315)
+    assert.equal(form.fileSize(result.files.small1[0].storage.result[0].path), 315)
+    assert.equal(result.files.small1[0].storage.result[1].buffer.length, 315)
 
-    assert.equal(result.fields.medium[0].originalName, 'medium.dat')
-    assert.equal(result.fields.medium[0].storage[0].size, 13196)
-    assert.equal(form.fileSize(result.fields.medium[0].storage[0].path), 13196)
-    assert.equal(result.fields.medium[0].storage[1].buffer.length, 13196)
+    assert.equal(result.files.medium[0].originalName, 'medium.dat')
+    assert.equal(result.files.medium[0].storage.result[0].size, 13196)
+    assert.equal(form.fileSize(result.files.medium[0].storage.result[0].path), 13196)
+    assert.equal(result.files.medium[0].storage.result[1].buffer.length, 13196)
 
-    assert.equal(result.fields.large[0].originalName, 'large.jpg')
-    assert.equal(result.fields.large[0].storage[0].size, 2413677)
-    assert.equal(form.fileSize(result.fields.large[0].storage[0].path), 2413677)
-    assert.equal(result.fields.large[0].storage[1].buffer.length, 2413677)
+    assert.equal(result.files.large[0].originalName, 'large.jpg')
+    assert.equal(result.files.large[0].storage.result[0].size, 2413677)
+    assert.equal(form.fileSize(result.files.large[0].storage.result[0].path), 2413677)
+    assert.equal(result.files.large[0].storage.result[1].buffer.length, 2413677)
   })
 
   it('should allow multiple disk storages', async () => {
@@ -156,17 +156,60 @@ describe('Multi Storage', function () {
     let error: DepartError;
     const result = await form.submit();
 
-    assert.equal(result.fields.empty[0].originalName, 'empty.dat')
-    assert.equal(result.fields.empty[0].storage[0].size, 0)
-    assert.equal(form.fileSize(result.fields.empty[0].storage[0].path), 0)
-    assert.equal(result.fields.empty[0].storage[1].size, 0)
-    assert.equal(form.fileSize(result.fields.empty[0].storage[1].path), 0)
+    assert.equal(result.files.empty[0].originalName, 'empty.dat')
+    assert.equal(result.files.empty[0].storage.result[0].size, 0)
+    assert.equal(form.fileSize(result.files.empty[0].storage.result[0].path), 0)
+    assert.equal(result.files.empty[0].storage.result[1].size, 0)
+    assert.equal(form.fileSize(result.files.empty[0].storage.result[1].path), 0)
 
-    assert.equal(result.fields.tiny0[0].originalName, 'tiny0.dat')
-    assert.equal(result.fields.tiny0[0].storage[0].size, 122)
-    assert.equal(form.fileSize(result.fields.tiny0[0].storage[0].path), 122)
-    assert.equal(result.fields.tiny0[0].storage[1].size, 122)
-    assert.equal(form.fileSize(result.fields.tiny0[0].storage[1].path), 122)
+    assert.equal(result.files.tiny0[0].originalName, 'tiny0.dat')
+    assert.equal(result.files.tiny0[0].storage.result[0].size, 122)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[0].path), 122)
+    assert.equal(result.files.tiny0[0].storage.result[1].size, 122)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[1].path), 122)
+  });
+
+
+  it('should allow skipping a storage method', async () => {
+
+    fs.mkdirSync(uploadDir + '\\sub1');
+    fs.mkdirSync(uploadDir + '\\sub2');
+    fs.mkdirSync(uploadDir + '\\sub3');
+
+    departCfg = {};
+    const newCfg = <DepartConfig>{
+      onFile: () => Promise.resolve([true, false, true]),
+      storage: [
+        new DiskStorage({ destination: uploadDir + '\\sub1' }),
+        new DiskStorage({ destination: uploadDir + '\\sub2' }),
+        new DiskStorage({ destination: uploadDir + '\\sub3' })
+      ],
+    };
+    var form = new TestForm(newCfg);
+
+    form.append('empty', form.file('empty.dat'))
+    form.append('tiny0', form.file('tiny0.dat'))
+
+    let error: DepartError;
+    const result = await form.submit();
+
+    assert.equal(result.files.empty[0].originalName, 'empty.dat')
+    assert.equal(result.files.empty[0].storage.result[0].size, 0)
+    assert.equal(form.fileSize(result.files.empty[0].storage.result[0].path), 0)
+
+    assert.equal(result.files.empty[0].storage.result[1], false)
+
+    assert.equal(result.files.empty[0].storage.result[2].size, 0)
+    assert.equal(form.fileSize(result.files.empty[0].storage.result[2].path), 0)
+
+    assert.equal(result.files.tiny0[0].originalName, 'tiny0.dat')
+    assert.equal(result.files.tiny0[0].storage.result[0].size, 122)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[0].path), 122)
+
+    assert.equal(result.files.tiny0[0].storage.result[1], false)
+
+    assert.equal(result.files.tiny0[0].storage.result[2].size, 122)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[2].path), 122)
   });
 
   it('should remove uploaded files from two disk storages on error', async () => {

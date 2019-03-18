@@ -1,21 +1,18 @@
 import { IStorageModule } from "./IStorageModule";
-import { DepartFile } from "../lib/models";
 const concat = require('concat-stream');
 
-
-export interface MemoryStorageInfo {
+export interface MemoryStorageResult {
   size: number;
   buffer: Buffer;
 }
 
-
-export class MemoryStorage implements IStorageModule<MemoryStorageInfo> {
-  handleFile(stream: NodeJS.ReadableStream, file: DepartFile) {
-    return new Promise<MemoryStorageInfo>((resolve, reject) => {
+export class MemoryStorage implements IStorageModule<null, MemoryStorageResult> {
+  handleFile(stream: NodeJS.ReadableStream) {
+    return new Promise<MemoryStorageResult>((resolve, reject) => {
       stream.pipe(concat({
         encoding: 'buffer'
       }, data => {
-        const fileInfo: MemoryStorageInfo = {
+        const fileInfo: MemoryStorageResult = {
           buffer: data,
           size: data.length
         };
@@ -24,7 +21,7 @@ export class MemoryStorage implements IStorageModule<MemoryStorageInfo> {
     });
   }
 
-  removeFile(file: MemoryStorageInfo) {
+  removeFile(file: MemoryStorageResult) {
     delete file.buffer
     return Promise.resolve();
   }

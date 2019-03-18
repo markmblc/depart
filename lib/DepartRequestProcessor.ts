@@ -1,25 +1,24 @@
 import * as Busboy from 'busboy';
 import { Request } from 'express';
-import { DepartError, DepartErrorCodes, DepartFile, DepartConfig } from './models';
+import { DepartError, DepartErrorCodes, DepartFile, DepartConfig, DepartStoredFile } from './models';
 import { Counter } from './Counter';
 import { DepartFormDataManager, DepartFormData } from './DepartFormData';
-import { DepartFileArray } from './DepartFileCollection';
-import { MemoryStorage } from '../storage/MemoryStorage';
+import { MemoryStorage, MemoryStorageResult } from '../storage/MemoryStorage';
 
 const StreamClone = require('readable-stream-clone');
 const onFinished = require('on-finished');
 const is = require('type-is');
 
 export class DepartRequestProcessor {
-  constructor(public options = {} as DepartConfig) {
-    if (typeof options.storage === 'undefined') options.storage = new MemoryStorage();
+  constructor(public options: DepartConfig = {} as DepartConfig) {
+    if (typeof options.storage === 'undefined') (options.storage as any) = new MemoryStorage();
   }
 
   request: Request;
 
   private formData = new DepartFormDataManager();
   private pendingWrites = new Counter();
-  private uploadedFiles = new Array<DepartFile>();
+  private uploadedFiles = new Array<DepartStoredFile>();
   private writeStream: NodeJS.WritableStream;
 
   async parse<Schema = any>(request: Request): Promise<DepartFormData<Schema>> {
@@ -131,12 +130,16 @@ export class DepartRequestProcessor {
       mimeType: mimeType,
     };
 
-    const fieldFiles = this.formData.fields[fieldName] && Array.isArray(this.formData.fields[fieldName]) ? this.formData.fields[fieldName] : new DepartFileArray();
+    const storedFile = Object.assign({}, file) as DepartStoredFile;
+
+    const fieldFiles = this.formData.files.in(fieldName);
 
     const fileValid = this._validateFileLimits(file, fieldFiles);
-    if (!fileValid) throw new DepartError(DepartErrorCodes.LIMIT_UNEXPECTED_FILE, file.fieldName);
+    if (!fileValid) {
+      throw new DepartError(DepartErrorCodes.LIMIT_UNEXPECTED_FILE, file.fieldName);
+    }
 
-    this.formData.file(file);
+    this.formData.files.push(storedFile);
 
     let error: DepartError;
 
@@ -145,15 +148,16 @@ export class DepartRequestProcessor {
     });
 
     fileStream.on('limit', () => {
-      this.uploadedFiles.push(file); // A truncated file still exists.
+      this.uploadedFiles.push(storedFile); // A truncated file still exists.
       error = new DepartError(DepartErrorCodes.LIMIT_FILE_SIZE, file.fieldName);
     });
 
+    let storageSetup: any;
     if (this.options.onFile) {
       try {
-        const result = await this.options.onFile(file, fieldFiles, this.request);
-        if (!result) {
-          this.formData.removeFile(file);
+        storageSetup = await this.options.onFile(file);
+        if (!storageSetup) {
+          this.formData.files.remove(file);
           return fileStream.resume();
         }
       } catch (err) {
@@ -167,11 +171,29 @@ export class DepartRequestProcessor {
 
     this.pendingWrites.increment();
 
+    let storageResult: any;
     try {
       if (Array.isArray(this.options.storage)) {
-        file.storage = await Promise.all(this.options.storage.map(async handler => await handler.handleFile(new StreamClone(fileStream), file, fieldFiles, this.request)));
+        const calls = new Array<Promise<any>>();
+        for (let x = 0; x < this.options.storage.length; x++) {
+          const storage = this.options.storage[x];
+          if (!storageSetup) {
+            calls.push(storage.handleFile(new StreamClone(fileStream), file));
+            continue;
+          }
+
+          let fileStorageInfo = storageSetup;
+          if (Array.isArray(storageSetup)) {
+            if (storageSetup.length !== this.options.storage.length) throw new DepartError(DepartErrorCodes.STORAGE_ERROR, `Return value of onFile should be an array with same length as number of storage modules (${this.options.storage.length})`);
+            fileStorageInfo = storageSetup[x];
+          }
+
+          if (typeof fileStorageInfo === 'boolean' && fileStorageInfo === false) calls.push(Promise.resolve(false as any));
+          else calls.push(storage.handleFile(new StreamClone(fileStream), file, fileStorageInfo));
+        }
+        storageResult = await Promise.all(calls);
       } else {
-        file.storage = await this.options.storage.handleFile(fileStream, file, fieldFiles, this.request);
+        storageResult = await this.options.storage.handleFile(fileStream, file, storageSetup);
       }
     } catch (err) {
       error = err;
@@ -179,14 +201,30 @@ export class DepartRequestProcessor {
 
     this.pendingWrites.decrement();
 
+    storedFile.storage = {
+      setup: storageSetup,
+      result: storageResult
+    };
+
+    if (this.options.onFileStored) {
+      try {
+        await this.options.onFileStored(storedFile);
+      } catch (err) {
+        this.uploadedFiles.push(storedFile);
+        error = err;
+      }
+    }
+
     if (error) {
-      this.formData.removeFile(file);
+      this.formData.files.remove(file);
       throw error;
     }
-    this.uploadedFiles.push(file);
+
+    this.uploadedFiles.push(storedFile);
+
   }
 
-  private async removeUploadedFiles(uploadedFiles: DepartFile[]) {
+  private async removeUploadedFiles(uploadedFiles: DepartStoredFile[]) {
     var length = uploadedFiles.length;
     var errors = new Array<DepartError>();
 
@@ -195,17 +233,23 @@ export class DepartRequestProcessor {
     await Promise.all(uploadedFiles.map(async file => {
       try {
         if (Array.isArray(this.options.storage)) {
-          if (!Array.isArray(file.storage)) throw new DepartError(DepartErrorCodes.STORAGE_ERROR, 'File storage details should be an array');
-
           const calls = new Array<Promise<void>>();
           for (let x = 0; x < this.options.storage.length; x++) {
             const storage = this.options.storage[x];
-            const fileStorageInfo = file.storage[x];
-            calls.push(storage.removeFile(fileStorageInfo, uploadedFiles as DepartFileArray, this.request));
+            const storageResult = file.storage.result;
+
+            let fileStorageInfo = storageResult;
+            if (Array.isArray(storageResult)) {
+              if (storageResult.length !== this.options.storage.length) throw new DepartError(DepartErrorCodes.STORAGE_ERROR, `Return value of onFile should be an array with same length as number of storage modules (${this.options.storage.length})`);
+              fileStorageInfo = storageResult[x];
+            }
+
+            if (typeof fileStorageInfo === 'boolean' && fileStorageInfo === false) calls.push(Promise.resolve());
+            else calls.push(storage.removeFile(fileStorageInfo));
           }
           await Promise.all(calls);
         } else {
-          await this.options.storage.removeFile(file.storage, uploadedFiles as DepartFileArray, this.request);
+          await this.options.storage.removeFile(file.storage.result);
         }
       } catch (storageErr) {
         const err = new DepartError(DepartErrorCodes.STORAGE_ERROR, `${file.fieldName}.${file.originalName}: ${storageErr.message}`);
@@ -215,14 +259,22 @@ export class DepartRequestProcessor {
     return errors;
   }
 
-  private _validateFileLimits(file: DepartFile, fieldFiles: DepartFileArray) {
-    let fieldMaxfileCount = -1;
+  private _validateFileLimits(file: DepartFile, fieldFiles: DepartFile[]) {
+    let fieldMaxFileCount = -1;
     if (this.options.fileFields) {
       if (Array.isArray(this.options.fileFields) && !this.options.fileFields.find(thisFieldName => thisFieldName === file.fieldName)) return false;
       else if (!Array.isArray(this.options.fileFields)) {
-        fieldMaxfileCount = this.options.fileFields[file.fieldName];
-        if (typeof fieldMaxfileCount === 'undefined') return false;
-        if (fieldFiles.length >= fieldMaxfileCount) return false;
+        const fieldOpts = this.options.fileFields[file.fieldName];
+        if (typeof fieldOpts === 'undefined') return false;
+        if (typeof fieldOpts === 'number') fieldMaxFileCount = fieldOpts;
+        else {
+          if (typeof fieldOpts.maxFiles !== 'undefined') fieldMaxFileCount = fieldOpts.maxFiles
+          if (typeof fieldOpts.requireUniqueOriginalName !== 'undefined') {
+            const existingFile = fieldFiles.find(thisFile => thisFile.originalName === file.originalName);
+            if (existingFile) throw new DepartError(DepartErrorCodes.LIMIT_UNEXPECTED_FILE, file.originalName + ' is a duplicate.');
+          }
+        }
+        if (fieldMaxFileCount >= 0 && fieldFiles.length >= fieldMaxFileCount) return false;
       }
     }
     return true;

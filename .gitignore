@@ -9,6 +9,7 @@ ehthumbs.db
 Desktop.ini
 .vscode
 Depart.code-workspace
+dist/
 
 # Linux
 .directory

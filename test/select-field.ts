@@ -48,15 +48,15 @@ describe('Select Field', function () {
 
     var file
 
-    file = result.fields['CA$|-|'][0]
+    file = result.files['CA$|-|'][0]
     assert.equal(file.fieldName, 'CA$|-|')
     assert.equal(file.originalName, 'empty.dat')
 
-    file = result.fields['set-1'][0]
+    file = result.files['set-1'][0]
     assert.equal(file.fieldName, 'set-1')
     assert.equal(file.originalName, 'tiny0.dat')
 
-    file = result.fields['set-2'][0]
+    file = result.files['set-2'][0]
     assert.equal(file.fieldName, 'set-2')
     assert.equal(file.originalName, 'tiny1.dat')
   })
@@ -65,8 +65,8 @@ describe('Select Field', function () {
     const form = generateForm(parser);
     const result = await form.submit();
 
-    assertSet(result.fields['CA$|-|'], 'CA$|-|', ['empty.dat'])
-    assertSet(result.fields['set-1'], 'set-1', ['tiny0.dat', 'empty.dat', 'tiny1.dat'])
-    assertSet(result.fields['set-2'], 'set-2', ['tiny1.dat', 'tiny0.dat', 'empty.dat'])
+    assertSet(result.files['CA$|-|'], 'CA$|-|', ['empty.dat'])
+    assertSet(result.files['set-1'], 'set-1', ['tiny0.dat', 'empty.dat', 'tiny1.dat'])
+    assertSet(result.files['set-2'], 'set-2', ['tiny1.dat', 'tiny0.dat', 'empty.dat'])
   })
 })

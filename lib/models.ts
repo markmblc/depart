@@ -1,5 +1,5 @@
 import { Request as ExpressRequest } from 'express';
-import { DepartFileArray } from './DepartFileCollection';
+import { DepartFileArray } from './DepartFileArray';
 import { IStorageModule } from '../storage/IStorageModule';
 
 export enum DepartFileStrategyEnum {
@@ -26,18 +26,30 @@ export class DepartFile {
     originalName?: string;
     encoding?: string;
     mimeType?: string;
-    storage?: any | any[];
 }
 
+export class DepartStoredFile<StorageSetupType = any, StorageResultType = any> extends DepartFile {
+    storage: {
+        setup: StorageSetupType,
+        result: StorageResultType;
+    }
+}
+
+export interface DepartFileFieldConfig {
+    maxFiles?: number;
+    requireUniqueOriginalName?: boolean;
+}
 
 export interface DepartConfig {
     fileFields?: string[] | {
-        [fieldName: string]: number
-    }
+        [fieldName: string]: number | DepartFileFieldConfig;
+    };
 
-    storage?: IStorageModule<any> | IStorageModule<any>[];
+    storage?: IStorageModule | IStorageModule[];
 
-    onFile?: (file: DepartFile, fieldFiles: DepartFileArray, req: ExpressRequest) => boolean;
+    onField?: (fieldName: string, value: string) => Promise<any>;
+    onFile?: (file: DepartFile) => Promise<any>;
+    onFileStored?: (file: DepartStoredFile) => Promise<void>;
 
     limits?: {
         fieldNameSize?: number;
@@ -77,7 +89,7 @@ const errorMessages = {
     [DepartErrorCodes.INVALID_CONFIGURATION]: 'A required configuration property is missing or invalid',
     [DepartErrorCodes.INVALID_FORMDATA]: 'Invalid form or data',
     [DepartErrorCodes.STORAGE_ERROR]: 'Error during file storage'
-}
+};
 
 export class DepartError extends Error {
     constructor(message: string);

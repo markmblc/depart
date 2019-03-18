@@ -133,8 +133,8 @@ it('should rename the destination directory to a different directory', () => {
   const result = await form.submit();
   assert.ifError(err)
   assert.equal(req.files.length, 2)
-  assert.ok(req.files[0].storage.path.indexOf('/testforme-') >= 0)
-  assert.ok(req.files[1].storage.path.indexOf('/testforme-') >= 0)
+  assert.ok(req.files[0].storage.result.path.indexOf('/testforme-') >= 0)
+  assert.ok(req.files[1].storage.result.path.indexOf('/testforme-') >= 0)
 
 })
 })

@@ -52,7 +52,7 @@ describe('Express Integration', function () {
     router.post('/profile', depart.handleRequest, function (req, res, next) {
       routeCalled++
       assert.notEqual(req.formData, undefined);
-      assert.equal(req.formData.fields['avatar'].length, 1);
+      assert.equal(req.formData.files.avatar.length, 1);
       res.status(200).end('SUCCESS')
     })
 

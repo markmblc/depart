@@ -15,9 +15,9 @@ describe('File ordering', function () {
     form.append('themFiles', form.file('small1.dat'))
 
     const result = await form.submit();
-    assert.equal(result.files.length, 2)
-    assert.equal(result.files[0].originalName, 'small0.dat')
-    assert.equal(result.files[1].originalName, 'small1.dat')
+    assert.equal(result.files.themFiles.length, 2)
+    assert.equal(result.files.themFiles[0].originalName, 'small0.dat')
+    assert.equal(result.files.themFiles[1].originalName, 'small1.dat')
 
   })
 })

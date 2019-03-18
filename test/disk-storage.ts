@@ -37,9 +37,9 @@ describe('Disk Storage', function () {
 
     const result = await form.submit();
     assert.equal(result.fields.name, 'Depart');
-    assert.equal(result.fields.small0[0].originalName, 'small0.dat')
-    assert.equal(result.fields.small0[0].storage.size, 1778);
-    assert.equal(form.fileSize(result.fields.small0[0].storage.path), 1778);
+    assert.equal(result.files.small0[0].originalName, 'small0.dat')
+    assert.equal(result.files.small0[0].storage.result.size, 1778);
+    assert.equal(form.fileSize(result.files.small0[0].storage.result.path), 1778);
   })
 
   it('should process empty fields and an empty file', async () => {
@@ -67,9 +67,9 @@ describe('Disk Storage', function () {
     assert.deepEqual(result.fields.checkboxhalfempty, ['cb1', ''])
     assert.deepEqual(result.fields.checkboxempty, ['', ''])
 
-    assert.equal(result.fields.empty[0].originalName, 'empty.dat')
-    assert.equal(result.fields.empty[0].storage.size, 0)
-    assert.equal(form.fileSize(result.fields.empty[0].storage.path), 0)
+    assert.equal(result.files.empty[0].originalName, 'empty.dat')
+    assert.equal(result.files.empty[0].storage.result.size, 0)
+    assert.equal(form.fileSize(result.files.empty[0].storage.result.path), 0)
   })
 
   it('should process multiple files', async () => {
@@ -85,33 +85,33 @@ describe('Disk Storage', function () {
 
     const result = await form.submit();
 
-    assert.equal(result.fields.empty[0].originalName, 'empty.dat')
-    assert.equal(result.fields.empty[0].storage.size, 0)
-    assert.equal(form.fileSize(result.fields.empty[0].storage.path), 0)
+    assert.equal(result.files.empty[0].originalName, 'empty.dat')
+    assert.equal(result.files.empty[0].storage.result.size, 0)
+    assert.equal(form.fileSize(result.files.empty[0].storage.result.path), 0)
 
-    assert.equal(result.fields.tiny0[0].originalName, 'tiny0.dat')
-    assert.equal(result.fields.tiny0[0].storage.size, 122)
-    assert.equal(form.fileSize(result.fields.tiny0[0].storage.path), 122)
+    assert.equal(result.files.tiny0[0].originalName, 'tiny0.dat')
+    assert.equal(result.files.tiny0[0].storage.result.size, 122)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result.path), 122)
 
-    assert.equal(result.fields.tiny1[0].originalName, 'tiny1.dat')
-    assert.equal(result.fields.tiny1[0].storage.size, 7)
-    assert.equal(form.fileSize(result.fields.tiny1[0].storage.path), 7)
+    assert.equal(result.files.tiny1[0].originalName, 'tiny1.dat')
+    assert.equal(result.files.tiny1[0].storage.result.size, 7)
+    assert.equal(form.fileSize(result.files.tiny1[0].storage.result.path), 7)
 
-    assert.equal(result.fields.small0[0].originalName, 'small0.dat')
-    assert.equal(result.fields.small0[0].storage.size, 1778)
-    assert.equal(form.fileSize(result.fields.small0[0].storage.path), 1778)
+    assert.equal(result.files.small0[0].originalName, 'small0.dat')
+    assert.equal(result.files.small0[0].storage.result.size, 1778)
+    assert.equal(form.fileSize(result.files.small0[0].storage.result.path), 1778)
 
-    assert.equal(result.fields.small1[0].originalName, 'small1.dat')
-    assert.equal(result.fields.small1[0].storage.size, 315)
-    assert.equal(form.fileSize(result.fields.small1[0].storage.path), 315)
+    assert.equal(result.files.small1[0].originalName, 'small1.dat')
+    assert.equal(result.files.small1[0].storage.result.size, 315)
+    assert.equal(form.fileSize(result.files.small1[0].storage.result.path), 315)
 
-    assert.equal(result.fields.medium[0].originalName, 'medium.dat')
-    assert.equal(result.fields.medium[0].storage.size, 13196)
-    assert.equal(form.fileSize(result.fields.medium[0].storage.path), 13196)
+    assert.equal(result.files.medium[0].originalName, 'medium.dat')
+    assert.equal(result.files.medium[0].storage.result.size, 13196)
+    assert.equal(form.fileSize(result.files.medium[0].storage.result.path), 13196)
 
-    assert.equal(result.fields.large[0].originalName, 'large.jpg')
-    assert.equal(result.fields.large[0].storage.size, 2413677)
-    assert.equal(form.fileSize(result.fields.large[0].storage.path), 2413677)
+    assert.equal(result.files.large[0].originalName, 'large.jpg')
+    assert.equal(result.files.large[0].storage.result.size, 2413677)
+    assert.equal(form.fileSize(result.files.large[0].storage.result.path), 2413677)
   })
 
   it('should remove uploaded files on error', async () => {

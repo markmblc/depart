@@ -17,7 +17,7 @@ describe('Unicode', function () {
   beforeEach((done) => {
     temp.mkdir(function (err, path) {
       if (err) return done(err)
-      departCfg = { storage: new DiskStorage({ destination: path, fileName: (file) => file.originalName }) };
+      departCfg = { storage: new DiskStorage({ destination: path, fileName: async (file) => file.originalName }) };
       uploadDir = path
       done()
     })
@@ -37,10 +37,10 @@ describe('Unicode', function () {
 
     const result = await form.submit();
 
-    assert.equal(path.basename(result.fields.small0[0].storage.path), fileName)
-    assert.equal(result.fields.small0[0].originalName, fileName)
+    assert.equal(path.basename(result.files.small0[0].storage.result.path), fileName)
+    assert.equal(result.files.small0[0].originalName, fileName)
 
-    assert.equal(result.fields.small0[0].storage.size, 1778)
-    assert.equal(form.fileSize(result.fields.small0[0].storage.path), 1778)
+    assert.equal(result.files.small0[0].storage.result.size, 1778)
+    assert.equal(form.fileSize(result.files.small0[0].storage.result.path), 1778)
   })
 })

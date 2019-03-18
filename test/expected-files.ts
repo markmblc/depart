@@ -80,8 +80,8 @@ describe('Expected files', function () {
 
     const result = await form.submit();
 
-    assert.equal(result.fields.butme.length, 2);
-    assert.equal(result.fields.andme.length, 1);
+    assert.equal(result.files.butme.length, 2);
+    assert.equal(result.files.andme.length, 1);
   })
 
   it('should reject files with unexpected fieldName', async () => {
@@ -116,7 +116,7 @@ describe('Expected files', function () {
     form.append('andme', form.file('empty.dat'));
 
     const result = await form.submit();
-    assert.equal(result.fields.butme.length, 2);
-    assert.equal(result.fields.andme.length, 1);
+    assert.equal(result.files.butme.length, 2);
+    assert.equal(result.files.andme.length, 1);
   })
 })
