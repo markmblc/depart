@@ -4,7 +4,8 @@ import { join } from 'path';
 import { randomBytes } from 'crypto';
 import { sync } from 'mkdirp';
 import { DepartFile, DepartError } from '../lib/models';
-import { BaseStorageModule } from './BaseStorageModule';
+import { IStorageModule } from './IStorageModule';
+import { coalesce } from 'async-coalesce';
 
 export interface DiskStorageSetup {
   fileName?: string | ((file: DepartFile, storageSetup: DiskStorageSetup) => Promise<string>);
@@ -16,13 +17,15 @@ export interface DiskStorageResult extends DiskStorageSetup {
   size: number;
 }
 
-export class DiskStorage extends BaseStorageModule<DiskStorageSetup, DiskStorageResult> {
+export class DiskStorage implements IStorageModule<DiskStorageSetup, DiskStorageResult> {
+  constructor(private storageCfg: DiskStorageSetup = {}) { }
+
   async handleFile(stream: NodeJS.ReadableStream, departFile: DepartFile, storageSetup?: DiskStorageSetup): Promise<DiskStorageResult> {
     if (!storageSetup) storageSetup = {};
 
-    const destination = await this.coalesce([storageSetup.destination, this.storageCfg.destination, tmpdir], [departFile, storageSetup]);
+    const destination = await coalesce([storageSetup.destination, this.storageCfg.destination, tmpdir], [departFile, storageSetup]);
     sync(destination);
-    const fileName = await this.coalesce([storageSetup.fileName, this.storageCfg.fileName, this._generateFilename], [departFile, storageSetup]);
+    const fileName = await coalesce([storageSetup.fileName, this.storageCfg.fileName, this._generateFilename], [departFile, storageSetup]);
 
     var finalPath = join(destination, fileName);
     var outStream = createWriteStream(finalPath);

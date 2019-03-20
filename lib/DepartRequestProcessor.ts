@@ -249,7 +249,8 @@ export class DepartRequestProcessor {
           }
           await Promise.all(calls);
         } else {
-          await this.options.storage.removeFile(file.storage.result);
+          if (typeof file.storage.result !== 'boolean' || file.storage.result !== false)
+            await this.options.storage.removeFile(file.storage.result);
         }
       } catch (storageErr) {
         const err = new DepartError(DepartErrorCodes.STORAGE_ERROR, `${file.fieldName}.${file.originalName}: ${storageErr.message}`);
@@ -260,21 +261,18 @@ export class DepartRequestProcessor {
   }
 
   private _validateFileLimits(file: DepartFile, fieldFiles: DepartFile[]) {
-    let fieldMaxFileCount = -1;
     if (this.options.fileFields) {
       if (Array.isArray(this.options.fileFields) && !this.options.fileFields.find(thisFieldName => thisFieldName === file.fieldName)) return false;
       else if (!Array.isArray(this.options.fileFields)) {
         const fieldOpts = this.options.fileFields[file.fieldName];
         if (typeof fieldOpts === 'undefined') return false;
-        if (typeof fieldOpts === 'number') fieldMaxFileCount = fieldOpts;
         else {
-          if (typeof fieldOpts.maxFiles !== 'undefined') fieldMaxFileCount = fieldOpts.maxFiles
+          if (typeof fieldOpts.maxFiles !== 'undefined' && fieldOpts.maxFiles >= 0 && fieldFiles.length >= fieldOpts.maxFiles) return false;
           if (typeof fieldOpts.requireUniqueOriginalName !== 'undefined') {
             const existingFile = fieldFiles.find(thisFile => thisFile.originalName === file.originalName);
             if (existingFile) throw new DepartError(DepartErrorCodes.LIMIT_UNEXPECTED_FILE, file.originalName + ' is a duplicate.');
           }
         }
-        if (fieldMaxFileCount >= 0 && fieldFiles.length >= fieldMaxFileCount) return false;
       }
     }
     return true;

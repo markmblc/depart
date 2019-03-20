@@ -42,7 +42,7 @@ export interface DepartFileFieldConfig {
 
 export interface DepartConfig {
     fileFields?: string[] | {
-        [fieldName: string]: number | DepartFileFieldConfig;
+        [fieldName: string]: DepartFileFieldConfig;
     };
 
     storage?: IStorageModule | IStorageModule[];
