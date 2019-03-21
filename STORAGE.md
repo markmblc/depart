@@ -30,12 +30,14 @@ interface IStorageModule<SetupType = any, ResultType = any> {
 * **removeFile** - Is responsible for removing the file from storage. It will be passed the `ResultType` returned from `handleFile`, so this value must contain all relavent data needed to successfully remove the file.
 
 ## `onFile` 
-The `onFile` function specified in `DepartConfig` allows setting file specific options that will be passed to each storage module. For example, if an uploaded file needs to have an associated record in a database before it is processed, then have its ID passed to a storage module, this is the place to do it. How those values are passed is different based on the returned value.
+The `onFile` function specified in `DepartConfig` allows setting file specific options that will be passed to each storage module. For example, if an uploaded file needs to have an associated record in a database before it is processed, then have its ID passed to a storage module, this is the place to do it. How those values are passed is different based on the returned value of `onFile`.
 
-If a single value is returned, that same value will be passed to each storage module. If an array of values is returned, the value sent to a storage module will be the value at the same relative index to the array of storage modules specified in `DepartConfig`. If the length of the returned array does not match the length of the storage module array, Depart will error. Examples below:
+If a single value is returned, that same value will be passed to each storage module. If an array of values is returned, the value sent to a storage module will be the value at the same relative index to the array of storage modules specified in `DepartConfig`. If the length of the returned array does not match the length of the storage module array, Depart will error.
 
 ## `onFileStorage` 
 The `onFileStorage` function specified in `DepartConfig` is called after all storage modules have successfully stored the file. The file will contain the `storage` property for final processing. 
+
+# Storage Examples
 
 ## Storage Setup
 
@@ -108,7 +110,7 @@ We want to skip storing in memory for any file that is not a .pdf
     }
 ```
 
-Because the `MemoryStorage` module was in the first position of our `storage` array during setup, it will be passed `false` if the file is not a pdf. The `DepartRequestProcessor` will bypass `MemoryStorage` completely, but will proceed with disk and our custom cloud storage. 
+Because the `MemoryStorage` module was in the first position of our `storage` array during setup, the `false` value in the first position of our `onFile` return value will instruct `DepartRequestProcessor` to bypass `MemoryStorage` completely, but proceed with disk and cloud storage. 
 
 ### Scenario 4
 
