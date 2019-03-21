@@ -5,7 +5,7 @@
 
 Depart allows an uploading file to be piped to multiple storage modules simultaneously. For example, the file could be piped into a buffer in memory for further processing in addition to being saved directly to disk.
 
-Depart comes with a `MemoryStorage` module, and a `DiskStorage` module, but any class implementing the `IStorageModule` interface can be used. There is also a `BaseStorageModule` class that could be extended which contains several useful utility functions.
+Depart comes with a `MemoryStorage` module, and a `DiskStorage` module, but any class implementing the `IStorageModule` interface can be used.
 
 ## `IStorageModule`
 
