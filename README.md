@@ -21,9 +21,11 @@ Depart is express middleware for handling `multipart/form-data`. It is also usab
 $ npm install --save depart
 ```
 
-## Usage
+## Storage
 
-**Please note**:  Depart's storage system is very robust and accomodates many different use cases. Please study the scenarios outlined in the <a href="STORAGE.MD">Storage Modules & onFile</a> guide before beginning implementation.
+Depart's storage system is very robust and accomodates many different use cases. Please study the scenarios outlined in the <a href="/STORAGE.MD">Storage Modules & onFile</a> guide before beginning implementation.
+
+## Usage
 
 Depart can be used as a standalone class, or it can be used as express middleware.
 
