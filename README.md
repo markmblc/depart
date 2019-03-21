@@ -23,7 +23,7 @@ $ npm install --save depart
 
 ## Storage
 
-Depart's storage system is very robust and accomodates many different use cases. Please study the scenarios outlined in the <a href="/STORAGE.MD">Storage Modules & onFile</a> guide before beginning implementation.
+Depart's storage system is very robust and accomodates many different use cases. Please study the scenarios outlined in the <a href="depart/STORAGE.md">Storage Modules & onFile</a> guide before beginning implementation.
 
 ## Usage
 
