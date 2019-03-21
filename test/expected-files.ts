@@ -46,7 +46,9 @@ describe('Expected files', function () {
   it('should reject overflowing arrays', async () => {
     var form = new TestForm({
       fileFields: {
-        'butme': 1
+        'butme': {
+          maxFiles: 1
+        }
       }
     })
 
@@ -69,8 +71,8 @@ describe('Expected files', function () {
   it('should accept files with expected fieldName', async () => {
     var form = new TestForm({
       fileFields: {
-        'butme': 2,
-        'andme': 2
+        'butme': { maxFiles: 2 },
+        'andme': { maxFiles: 2 }
       }
     })
 
@@ -87,8 +89,8 @@ describe('Expected files', function () {
   it('should reject files with unexpected fieldName', async () => {
     var form = new TestForm({
       fileFields: {
-        'butme': 2,
-        'andme': 2
+        'butme': { maxFiles: 2 },
+        'andme': { maxFiles: 2 }
       }
     })
 

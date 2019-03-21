@@ -1,7 +1,7 @@
 {
   "name": "depart",
   "description": "TypeScript/async compatible standalone or express middleware for handling `multipart/form-data`.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "contributors": [
     "Marqit8 <depart@marqit8.com>"
   ],
@@ -24,7 +24,7 @@
   ],
   "dependencies": {
     "append-field": "^1.0.0",
-    "async-coalesce": "^1.0.1",
+    "async-coalesce": "^1.0.3",
     "busboy": "^0.3.0",
     "concat-stream": "^2.0.0",
     "mkdirp": "^0.5.1",
@@ -61,7 +61,6 @@
     "bump": "npm --no-git-tag-version version patch",
     "clean": "rimraf dist",
     "build": "tsc",
-    "buildToDMS": "tsc --outDir C:\\Users\\b21480\\Documents\\_Projects\\DMS\\DMS.API\\node_modules\\depart\\dist",
     "npmpublish": "npm publish --access public",
     "deploy": "run-s clean build bump npmpublish clean"
   },
