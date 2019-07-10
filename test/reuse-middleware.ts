@@ -33,8 +33,8 @@ describe('Reuse Middleware', function () {
       result.files['them-files'].forEach(function (file: DepartStoredFile) {
         assert.equal(file.fieldName, 'them-files')
         assert.equal(file.originalName, 'small0.dat')
-        assert.equal(file.storage.result.size, 1778)
-        assert.equal(file.storage.result.buffer.length, 1778)
+        assert.equal(file.storage.result.size, 1803)
+        assert.equal(file.storage.result.buffer.length, 1803)
       })
     }
 

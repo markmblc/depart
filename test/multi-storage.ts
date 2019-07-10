@@ -39,9 +39,9 @@ describe('Multi Storage', function () {
     const result = await form.submit();
     assert.equal(result.fields.name, 'Depart');
     assert.equal(result.files.small0[0].originalName, 'small0.dat')
-    assert.equal(result.files.small0[0].storage.result[0].size, 1778);
-    assert.equal(result.files.small0[0].storage.result[1].buffer.length, 1778);
-    assert.equal(form.fileSize(result.files.small0[0].storage.result[0].path), 1778);
+    assert.equal(result.files.small0[0].storage.result[0].size, 1803);
+    assert.equal(result.files.small0[0].storage.result[1].buffer.length, 1803);
+    assert.equal(form.fileSize(result.files.small0[0].storage.result[0].path), 1803);
   })
 
   it('should store on disk in two places', async () => {
@@ -53,9 +53,9 @@ describe('Multi Storage', function () {
     const result = await form.submit();
     assert.equal(result.fields.name, 'Depart');
     assert.equal(result.files.small0[0].originalName, 'small0.dat')
-    assert.equal(result.files.small0[0].storage.result[0].size, 1778);
-    assert.equal(result.files.small0[0].storage.result[1].buffer.length, 1778);
-    assert.equal(form.fileSize(result.files.small0[0].storage.result[0].path), 1778);
+    assert.equal(result.files.small0[0].storage.result[0].size, 1803);
+    assert.equal(result.files.small0[0].storage.result[1].buffer.length, 1803);
+    assert.equal(form.fileSize(result.files.small0[0].storage.result[0].path), 1803);
   })
 
   it('should process empty fields and store an empty file in disk and memory', async () => {
@@ -74,7 +74,7 @@ describe('Multi Storage', function () {
 
     const result = await form.submit();
 
-
+debugger;
     assert.equal(result.fields.name, 'Depart')
     assert.equal(result.fields.version, '')
     assert.equal(result.fields.year, '')
@@ -109,9 +109,9 @@ describe('Multi Storage', function () {
     assert.equal(result.files.empty[0].storage.result[1].buffer.length, 0)
 
     assert.equal(result.files.tiny0[0].originalName, 'tiny0.dat')
-    assert.equal(result.files.tiny0[0].storage.result[0].size, 122)
-    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[0].path), 122)
-    assert.equal(result.files.tiny0[0].storage.result[1].buffer.length, 122)
+    assert.equal(result.files.tiny0[0].storage.result[0].size, 128)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[0].path), 128)
+    assert.equal(result.files.tiny0[0].storage.result[1].buffer.length, 128)
 
     assert.equal(result.files.tiny1[0].originalName, 'tiny1.dat')
     assert.equal(result.files.tiny1[0].storage.result[0].size, 7)
@@ -119,19 +119,19 @@ describe('Multi Storage', function () {
     assert.equal(result.files.tiny1[0].storage.result[1].buffer.length, 7)
 
     assert.equal(result.files.small0[0].originalName, 'small0.dat')
-    assert.equal(result.files.small0[0].storage.result[0].size, 1778)
-    assert.equal(form.fileSize(result.files.small0[0].storage.result[0].path), 1778)
-    assert.equal(result.files.small0[0].storage.result[1].buffer.length, 1778)
+    assert.equal(result.files.small0[0].storage.result[0].size, 1803)
+    assert.equal(form.fileSize(result.files.small0[0].storage.result[0].path), 1803)
+    assert.equal(result.files.small0[0].storage.result[1].buffer.length, 1803)
 
     assert.equal(result.files.small1[0].originalName, 'small1.dat')
-    assert.equal(result.files.small1[0].storage.result[0].size, 315)
-    assert.equal(form.fileSize(result.files.small1[0].storage.result[0].path), 315)
-    assert.equal(result.files.small1[0].storage.result[1].buffer.length, 315)
+    assert.equal(result.files.small1[0].storage.result[0].size, 329)
+    assert.equal(form.fileSize(result.files.small1[0].storage.result[0].path), 329)
+    assert.equal(result.files.small1[0].storage.result[1].buffer.length, 329)
 
     assert.equal(result.files.medium[0].originalName, 'medium.dat')
-    assert.equal(result.files.medium[0].storage.result[0].size, 13196)
-    assert.equal(form.fileSize(result.files.medium[0].storage.result[0].path), 13196)
-    assert.equal(result.files.medium[0].storage.result[1].buffer.length, 13196)
+    assert.equal(result.files.medium[0].storage.result[0].size, 13386)
+    assert.equal(form.fileSize(result.files.medium[0].storage.result[0].path), 13386)
+    assert.equal(result.files.medium[0].storage.result[1].buffer.length, 13386)
 
     assert.equal(result.files.large[0].originalName, 'large.jpg')
     assert.equal(result.files.large[0].storage.result[0].size, 2413677)
@@ -163,10 +163,10 @@ describe('Multi Storage', function () {
     assert.equal(form.fileSize(result.files.empty[0].storage.result[1].path), 0)
 
     assert.equal(result.files.tiny0[0].originalName, 'tiny0.dat')
-    assert.equal(result.files.tiny0[0].storage.result[0].size, 122)
-    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[0].path), 122)
-    assert.equal(result.files.tiny0[0].storage.result[1].size, 122)
-    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[1].path), 122)
+    assert.equal(result.files.tiny0[0].storage.result[0].size, 128)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[0].path), 128)
+    assert.equal(result.files.tiny0[0].storage.result[1].size, 128)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[1].path), 128)
   });
 
 
@@ -203,13 +203,13 @@ describe('Multi Storage', function () {
     assert.equal(form.fileSize(result.files.empty[0].storage.result[2].path), 0)
 
     assert.equal(result.files.tiny0[0].originalName, 'tiny0.dat')
-    assert.equal(result.files.tiny0[0].storage.result[0].size, 122)
-    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[0].path), 122)
+    assert.equal(result.files.tiny0[0].storage.result[0].size, 128)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[0].path), 128)
 
     assert.equal(result.files.tiny0[0].storage.result[1], false)
 
-    assert.equal(result.files.tiny0[0].storage.result[2].size, 122)
-    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[2].path), 122)
+    assert.equal(result.files.tiny0[0].storage.result[2].size, 128)
+    assert.equal(form.fileSize(result.files.tiny0[0].storage.result[2].path), 128)
   });
 
   it('should remove uploaded files from two disk storages on error', async () => {

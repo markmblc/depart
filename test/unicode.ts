@@ -40,7 +40,7 @@ describe('Unicode', function () {
     assert.equal(path.basename(result.files.small0[0].storage.result.path), fileName)
     assert.equal(result.files.small0[0].originalName, fileName)
 
-    assert.equal(result.files.small0[0].storage.result.size, 1778)
-    assert.equal(form.fileSize(result.files.small0[0].storage.result.path), 1778)
+    assert.equal(result.files.small0[0].storage.result.size, 1803)
+    assert.equal(form.fileSize(result.files.small0[0].storage.result.path), 1803)
   })
 })
